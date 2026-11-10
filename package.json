@@ -1,0 +1,49 @@
+{
+  "name": "@databucket/client",
+  "version": "2.0.0",
+  "description": "Client for Databucket (test data management): find, reserve, change and remove test data from your automated tests",
+  "keywords": [
+    "databucket",
+    "test data",
+    "test data management",
+    "playwright",
+    "testing"
+  ],
+  "homepage": "https://github.com/databucket/databucket-js-client#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/databucket/databucket-js-client.git"
+  },
+  "bugs": "https://github.com/databucket/databucket-js-client/issues",
+  "license": "MIT",
+  "author": "Krzysztof Słysz",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run test/unit",
+    "test:it": "vitest run test/it",
+    "test:all": "vitest run",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  }
+}
