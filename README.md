@@ -15,7 +15,10 @@ and remove test data from your automated tests (Playwright, Cypress tasks, Jest,
 npm install --save-dev databucket-client
 ```
 
-The same features and version numbers as the [Java client](https://github.com/databucket/databucket-java-client).
+The same features and version numbers as the [Java client](https://github.com/databucket/databucket-java-client) and
+the [Python client](https://github.com/databucket/databucket-python-client).
+
+Runnable examples - Playwright tests that reserve, change, create and find data on the DEMO dataset: [databucket-examples/js](https://github.com/databucket/databucket-examples/tree/main/js).
 
 ## Quick start
 
