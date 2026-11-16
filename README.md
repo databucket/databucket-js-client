@@ -1,6 +1,6 @@
 # databucket-js-client
 
-[![npm](https://img.shields.io/npm/v/@databucket/client)](https://www.npmjs.com/package/@databucket/client)
+[![npm](https://img.shields.io/npm/v/databucket-client)](https://www.npmjs.com/package/databucket-client)
 
 JavaScript / TypeScript client for [Databucket](https://github.com/databucket/databucket-server): find, reserve, change
 and remove test data from your automated tests (Playwright, Cypress tasks, Jest, Vitest, scripts).
@@ -12,7 +12,7 @@ and remove test data from your automated tests (Playwright, Cypress tasks, Jest,
 - Parallel tests never reserve the same row
 
 ```
-npm install --save-dev @databucket/client
+npm install --save-dev databucket-client
 ```
 
 The same features and version numbers as the [Java client](https://github.com/databucket/databucket-java-client).
@@ -20,7 +20,7 @@ The same features and version numbers as the [Java client](https://github.com/da
 ## Quick start
 
 ```ts
-import { Databucket, Rule, Rules, Change } from '@databucket/client';
+import { Databucket, Rule, Rules, Change } from 'databucket-client';
 
 const databucket = new Databucket({
   url: 'https://databucket.example.com',
@@ -58,7 +58,7 @@ A fixture that gives each test its own user and releases it afterwards, also whe
 ```ts
 // fixtures.ts
 import { test as base } from '@playwright/test';
-import { Databucket, Rule, Rules, type DataRow } from '@databucket/client';
+import { Databucket, Rule, Rules, type DataRow } from 'databucket-client';
 
 const databucket = new Databucket({
   url: process.env.DATABUCKET_URL!,
@@ -181,4 +181,4 @@ The integration tests need Databucket with the DEMO dataset, e.g. the docker com
 Databucket 3.14.0+. Change it with `DATABUCKET_URL`, `DATABUCKET_PROJECT`, `DATABUCKET_BUCKET`. They work only on rows
 they create and remove them at the end.
 
-Release to npm: `npm publish --access public` (runs the type check, unit tests and build first).
+Release to npm: `npm publish` (runs the type check, unit tests and build first).

@@ -1,5 +1,5 @@
 {
-  "name": "@databucket/client",
+  "name": "databucket-client",
   "version": "2.0.0",
   "description": "Client for Databucket (test data management): find, reserve, change and remove test data from your automated tests",
   "keywords": [
