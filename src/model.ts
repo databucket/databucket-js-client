@@ -27,7 +27,10 @@ export interface Page<T> {
 export interface Reservation<T> {
   /** The reserved rows (fewer than the limit when not enough free rows match). */
   rows: DataRow<T>[];
-  /** Number of free rows matching the rules left after this reservation. */
+  /**
+   * Number of free rows matching the rules left after this reservation; -1 when not counted
+   * ({@link Reserve.withoutCount}).
+   */
   available: number;
 }
 
