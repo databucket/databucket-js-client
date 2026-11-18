@@ -84,15 +84,22 @@ export class Bucket<T> {
   }
 
   /** @internal */
-  async reserveRows(rules: Rules, limit: number, sort: string, forUser: string | undefined): Promise<Reservation<T>> {
+  async reserveRows(
+    rules: Rules,
+    limit: number,
+    sort: string,
+    forUser: string | undefined,
+    count: boolean,
+  ): Promise<Reservation<T>> {
     const body: Record<string, unknown> = { ...rules.toBody() };
     if (forUser !== undefined) body.targetOwnerUsername = forUser;
     const json = await this.databucket.call(
       'POST',
-      `${this.path}/reserve?limit=${limit}&sort=${encodeURIComponent(sort)}`,
+      `${this.path}/reserve?limit=${limit}&sort=${encodeURIComponent(sort)}${count ? '' : '&count=false'}`,
       body,
     );
-    return { rows: this.rows(json?.data), available: Number(json?.available ?? 0) };
+    // not counted (count=false): no 'available' in the response
+    return { rows: this.rows(json?.data), available: json?.available === undefined ? -1 : Number(json.available) };
   }
 
   /** Releases the rows (reserved = false); returns the number of changed rows. */

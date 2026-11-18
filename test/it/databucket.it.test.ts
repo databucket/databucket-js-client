@@ -249,6 +249,19 @@ describe('reserve', () => {
     expect(await items.reserve(free).available()).toBe(1);
   });
 
+  it('reserve without counting the free rows', async () => {
+    const group = unique('reserve-no-count');
+    for (let i = 0; i < 3; i++) await items.insert(item(group, 'free', i));
+    const free = named(group);
+
+    const two = await items.reserve(free).limit(2).withoutCount().fetch();
+    expect(two.rows).toHaveLength(2);
+    expect(two.available).toBe(-1);
+
+    expect(await items.reserve(free).one()).toBeDefined();
+    expect(await items.reserve(free).available()).toBe(0);
+  });
+
   it('parallel reservations never share a row', async () => {
     const group = unique('parallel');
     await items.insertAll(Array.from({ length: 20 }, (_, i) => item(group, 'free', i)));

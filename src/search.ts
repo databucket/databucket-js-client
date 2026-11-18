@@ -70,13 +70,18 @@ export class Query<T> {
  * ```ts
  * const user = await users.reserve(rules).one();
  * const r = await users.reserve(rules).limit(3).sort(Sort.RANDOM).fetch();
+ * const quick = await users.reserve(rules).limit(3).withoutCount().fetch();
  * const free = await users.reserve(rules).available();
  * ```
+ * Counting the free rows that still match ({@link Reservation.available}) reads all of them: with many matching
+ * rows it is most of the time of a reservation. {@link Reserve.one} never counts, {@link Reserve.withoutCount} skips
+ * it for {@link Reserve.fetch} (Databucket 3.16.3+; older servers always count).
  */
 export class Reserve<T> {
   private _limit = 1;
   private _sort = 'id';
   private _forUser: string | undefined;
+  private _count = true;
 
   /** @internal */
   constructor(
@@ -104,18 +109,27 @@ export class Reserve<T> {
     return this;
   }
 
-  fetch(): Promise<Reservation<T>> {
-    return this.bucket.reserveRows(this.rules, this._limit, this._sort, this._forUser);
+  /**
+   * Reserve without counting the free rows still matching ({@link Reservation.available} is then -1): faster when
+   * many rows match.
+   */
+  withoutCount(): this {
+    this._count = false;
+    return this;
   }
 
-  /** Reserves one row; undefined when no free row matches. */
+  fetch(): Promise<Reservation<T>> {
+    return this.bucket.reserveRows(this.rules, this._limit, this._sort, this._forUser, this._count);
+  }
+
+  /** Reserves one row; undefined when no free row matches. Doesn't count the free rows (not needed here). */
   async one(): Promise<DataRow<T> | undefined> {
-    return (await this.bucket.reserveRows(this.rules, 1, this._sort, this._forUser)).rows[0];
+    return (await this.bucket.reserveRows(this.rules, 1, this._sort, this._forUser, false)).rows[0];
   }
 
   /** Number of free rows matching the rules; nothing is reserved. */
   async available(): Promise<number> {
-    return (await this.bucket.reserveRows(this.rules, 0, this._sort, this._forUser)).available;
+    return (await this.bucket.reserveRows(this.rules, 0, this._sort, this._forUser, true)).available;
   }
 }
 
