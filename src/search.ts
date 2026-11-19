@@ -10,12 +10,17 @@ import { Rules } from './rules.js';
  * const rows = await users.find(rules).limit(100).list();
  * const row = await users.find(rules).first();
  * const count = await users.find(rules).count();
+ * const next = await users.find(rules).limit(20).page(3).withoutCount().fetch();
  * ```
+ * Counting all the matching rows ({@link Page.total}) reads every one of them: with many matching rows it is most of
+ * the time of a page. {@link Query.list} and {@link Query.first} never count, {@link Query.withoutCount} skips it for
+ * {@link Query.fetch} (Databucket 3.18.1+; older servers always count).
  */
 export class Query<T> {
   private _page = 1;
   private _limit = 1;
   private _sort = 'id';
+  private _count = true;
 
   /** @internal */
   constructor(
@@ -44,18 +49,27 @@ export class Query<T> {
     return this;
   }
 
+  /**
+   * Fetch the page without counting all the matching rows ({@link Page.total} and {@link Page.totalPages} are then
+   * -1): faster when many rows match, e.g. for the next pages of the same rules.
+   */
+  withoutCount(): this {
+    this._count = false;
+    return this;
+  }
+
   fetch(): Promise<Page<T>> {
-    return this.bucket.fetchPage(this.rules, this._page, this._limit, this._sort);
+    return this.bucket.fetchPage(this.rules, this._page, this._limit, this._sort, this._count);
   }
 
-  /** The rows of the page. */
+  /** The rows of the page. Doesn't count the matching rows (not needed here). */
   async list(): Promise<DataRow<T>[]> {
-    return (await this.fetch()).rows;
+    return (await this.bucket.fetchPage(this.rules, this._page, this._limit, this._sort, false)).rows;
   }
 
-  /** The first matching row; undefined when none matches. */
+  /** The first matching row; undefined when none matches. Doesn't count the matching rows. */
   async first(): Promise<DataRow<T> | undefined> {
-    return (await this.bucket.fetchPage(this.rules, 1, 1, this._sort)).rows[0];
+    return (await this.bucket.fetchPage(this.rules, 1, 1, this._sort, false)).rows[0];
   }
 
   /** Number of matching rows (no rows are transferred). */
