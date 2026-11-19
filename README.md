@@ -125,7 +125,7 @@ All operations return promises.
 | `insert(properties)`, `insert(NewData.of(p).tagId(3).reserved(true))` | `POST /api/bucket/{bucket}` |
 | `insertAll([p1, p2, NewData.of(p3).tagId(3)])` | `POST /api/bucket/{bucket}/multi` |
 | `get(id)` (`undefined` when missing), `get([id1, id2])` | `GET /api/bucket/{bucket}/{ids}` |
-| `find(rules).sort(Sort.desc('$.name')).limit(20).page(2).fetch()` / `.list()` / `.first()` / `.count()`, `count(rules)` | `POST /api/bucket/{bucket}/get` |
+| `find(rules).sort(Sort.desc('$.name')).limit(20).page(2).fetch()` / `.withoutCount()` / `.list()` / `.first()` / `.count()`, `count(rules)` | `POST /api/bucket/{bucket}/get` |
 | `reserve(rules).one()`, `.limit(3).sort(Sort.RANDOM).fetch()`, `.withoutCount()`, `.available()`, `.forUser('john')` (ADMIN) | `POST /api/bucket/{bucket}/reserve` |
 | `update(change, ...ids)`, `update(rules, change)`, `release(...ids)` | `PUT /api/bucket/{bucket}[/{ids}]` |
 | `delete(...ids)`, `delete(rules)` | `DELETE /api/bucket/{bucket}[/{ids}]` |

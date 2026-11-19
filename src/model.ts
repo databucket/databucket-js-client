@@ -18,8 +18,9 @@ export interface Page<T> {
   /** Page number, starting from 1. */
   page: number;
   limit: number;
-  /** Number of all matching rows. */
+  /** Number of all matching rows; -1 when not counted ({@link Query.withoutCount}). */
   total: number;
+  /** Number of pages; -1 when not counted. */
   totalPages: number;
 }
 

@@ -61,18 +61,20 @@ export class Bucket<T> {
   }
 
   /** @internal */
-  async fetchPage(rules: Rules, page: number, limit: number, sort: string): Promise<Page<T>> {
+  async fetchPage(rules: Rules, page: number, limit: number, sort: string, count = true): Promise<Page<T>> {
     const json = await this.databucket.call(
       'POST',
-      `${this.path}/get?page=${page}&limit=${limit}&sort=${encodeURIComponent(sort)}`,
+      `${this.path}/get?page=${page}&limit=${limit}&sort=${encodeURIComponent(sort)}${count ? '' : '&count=false'}`,
       rules.toBody(),
     );
+    // not counted (count=false): no 'total' and 'totalPages' in the response
+    const counted = json?.total !== undefined;
     return {
       rows: this.rows(json?.data),
       page: json?.page ?? page,
       limit: json?.limit ?? limit,
-      total: Number(json?.total ?? 0),
-      totalPages: json?.totalPages ?? 0,
+      total: counted ? Number(json.total) : -1,
+      totalPages: counted ? (json?.totalPages ?? 0) : -1,
     };
   }
 

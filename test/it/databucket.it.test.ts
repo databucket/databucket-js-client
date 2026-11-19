@@ -170,6 +170,21 @@ describe('insert and read', () => {
     const beyond = await items.find(rules).limit(3).page(9).fetch();
     expect(beyond.rows).toHaveLength(0);
   });
+
+  it('a page without counting the matching rows', async () => {
+    const batch = unique('no-count');
+    await items.insertAll(Array.from({ length: 5 }, (_, i) => item(batch, 'paged', i + 1)));
+    const rules = named(batch);
+
+    const page2 = await items.find(rules).sort(Sort.desc('$.count')).limit(2).page(2).withoutCount().fetch();
+    expect(page2.rows.map((r) => r.properties.count)).toEqual([3, 2]);
+    expect(page2.total).toBe(-1);
+    expect(page2.totalPages).toBe(-1);
+
+    expect(await items.find(rules).limit(10).list()).toHaveLength(5);
+    expect((await items.find(rules).sort(Sort.desc('$.count')).first())?.properties.count).toBe(5);
+    expect((await items.find(rules).limit(2).fetch()).total).toBe(5);
+  });
 });
 
 describe('rules (API v2)', () => {
