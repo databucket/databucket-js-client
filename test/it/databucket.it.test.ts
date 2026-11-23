@@ -406,3 +406,13 @@ describe('history', () => {
     expect((await fails(() => items.searchHistory(rows).where(Rule.property('$.status').eq('used')).count())).status).toBe(400);
   });
 });
+
+describe('jobs', () => {
+  it('an unknown keyword lists the keywords (Databucket 3.23.0+)', async () => {
+    // the jobs need a project set up by an admin; an unknown keyword checks the call
+    const error = await fails(() => robot.runJobs(`client-it ${RUN}`, { preview: true }));
+    expect(error.status).toBe(404);
+    expect(error.message).toContain('No job has the keyword');
+    await expect(robot.runJobs(' ')).rejects.toThrow(TypeError);
+  });
+});

@@ -1,5 +1,5 @@
 import { Bucket } from './bucket.js';
-import { DatabucketError, type Project } from './model.js';
+import { DatabucketError, type JobsRun, type Project } from './model.js';
 
 export const API_VERSION_HEADER = 'Databucket-Api-Version';
 const API_VERSION = '2';
@@ -91,6 +91,19 @@ export class Databucket {
   /** A bucket; `T` is the type of its properties (default: a plain object). */
   bucket<T = Record<string, any>>(name: string): Bucket<T> {
     return new Bucket<T>(this, name);
+  }
+
+  /**
+   * Runs all the jobs with the keyword (Settings → Jobs), e.g. "DEV cleaning", one after another by id, as this user
+   * (ROBOT or higher, with access to the jobs' buckets). A failed job doesn't stop the others: check `errors`.
+   * `preview: true` changes nothing; `count` of each job is then the rows it would run on. Needs Databucket 3.23.0+.
+   * Throws a DatabucketError with status 404 when no job has the keyword (the message lists the keywords), 409 when
+   * the jobs of the keyword are running.
+   */
+  async runJobs(keyword: string, options: { preview?: boolean } = {}): Promise<JobsRun> {
+    if (!keyword || !keyword.trim()) throw new TypeError('The keyword is empty');
+    const path = '/api/task-schedules/run' + (options.preview ? '?preview=true' : '');
+    return (await this.call('POST', path, { keyword })) as JobsRun;
   }
 
   /** The project the client works in (signs in if not done yet); undefined when only a token was given. */

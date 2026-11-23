@@ -134,6 +134,16 @@ All operations return promises.
 
 `update`, `release`, `delete` and `clearHistory` return the number of changed rows (or removed history entries).
 
+Jobs (on the client, not a bucket; Databucket 3.23.0+, ROBOT or higher):
+
+| Method | API |
+|---|---|
+| `databucket.runJobs('DEV cleaning')`, `databucket.runJobs('DEV cleaning', { preview: true })` | `POST /api/task-schedules/run` |
+
+`runJobs` runs all the [jobs](https://github.com/databucket/databucket-server/wiki/Jobs) with the keyword (Settings → Jobs),
+one after another, as the signed-in user - e.g. to clean the test data before the tests. A failed job doesn't stop the
+others: check `errors` and `jobs` of the result.
+
 ## History
 
 ```ts
