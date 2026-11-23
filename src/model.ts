@@ -25,6 +25,31 @@ export interface Page<T> {
 }
 
 /** The result of {@link Reserve.fetch}. */
+/** The result of {@link Databucket.runJobs}: one entry per job, in the order they ran (by id). */
+export interface JobsRun {
+  /** The keyword as given. */
+  keyword: string;
+  /** True: nothing was changed, the counts are the rows each job would run on. */
+  preview: boolean;
+  /** The jobs that ran without an error. */
+  ok: number;
+  /** The jobs that failed. */
+  errors: number;
+  jobs: Array<{
+    id: number;
+    name: string;
+    /** The name of the task. */
+    task: string;
+    /** The name of the bucket. */
+    bucket: string;
+    status: 'OK' | 'ERROR';
+    /** The number of data rows; null when the job failed before counting. */
+    count: number | null;
+    /** What the task did, or why it failed. */
+    message: string;
+  }>;
+}
+
 export interface Reservation<T> {
   /** The reserved rows (fewer than the limit when not enough free rows match). */
   rows: DataRow<T>[];

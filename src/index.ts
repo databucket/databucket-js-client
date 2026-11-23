@@ -13,4 +13,5 @@ export {
   type HistoryEntry,
   type HistoryPage,
   type Project,
+  type JobsRun,
 } from './model.js';
