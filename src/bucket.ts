@@ -120,11 +120,11 @@ export class Bucket<T> {
       this.requireRules(first, 'modify');
       const change = rest[0];
       if (!(change instanceof Change)) throw new TypeError('update(rules, change): the change is missing');
-      return count(await this.databucket.call('PUT', this.path, { ...change.toBody(), ...first.toBody() }));
+      return count(await this.databucket.change(this.path, { ...change.toBody(), ...first.toBody() }));
     }
     const ids = rest as number[];
     if (ids.length === 0) return 0;
-    return count(await this.databucket.call('PUT', `${this.path}/${ids.join(',')}`, first.toBody()));
+    return count(await this.databucket.change(`${this.path}/${ids.join(',')}`, first.toBody()));
   }
 
   /** Removes the rows with the given ids together with their history; returns the number of removed rows. */
