@@ -127,7 +127,7 @@ All operations return promises.
 | `get(id)` (`undefined` when missing), `get([id1, id2])` | `GET /api/bucket/{bucket}/{ids}` |
 | `find(rules).sort(Sort.desc('$.name')).limit(20).page(2).fetch()` / `.withoutCount()` / `.list()` / `.first()` / `.count()`, `count(rules)` | `POST /api/bucket/{bucket}/get` |
 | `reserve(rules).one()`, `.limit(3).sort(Sort.RANDOM).fetch()`, `.withoutCount()`, `.available()`, `.forUser('john')` (ADMIN) | `POST /api/bucket/{bucket}/reserve` |
-| `update(change, ...ids)`, `update(rules, change)`, `release(...ids)` | `PUT /api/bucket/{bucket}[/{ids}]` |
+| `update(change, ...ids)`, `update(rules, change)`, `release(...ids)` | `PATCH /api/bucket/{bucket}[/{ids}]` (`PUT` with a server before 3.26.0) |
 | `delete(...ids)`, `delete(rules)` | `DELETE /api/bucket/{bucket}[/{ids}]` |
 | `history(id)`, `historyProperties(id, ...historyIds)`, `clearHistory(id)`, `clearHistory(rules)` | `/api/bucket/{bucket}/{id}/history...` |
 | `searchHistory(rows).where(...).sort(...).limit(50).withProperties().fetch()` / `.list()` / `.count()` | `POST /api/bucket/{bucket}/history/get` |

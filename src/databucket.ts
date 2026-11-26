@@ -188,6 +188,22 @@ export class Databucket {
     return this.handle(method, path, response);
   }
 
+  // data rows are changed with PATCH (Databucket 3.26.0+); an older server answers 405, then PUT, from then on
+  private changeWithPut = false;
+
+  /** @internal Changes data rows: PATCH, or PUT for a server before 3.26.0. */
+  async change(path: string, body: unknown): Promise<any> {
+    if (!this.changeWithPut) {
+      try {
+        return await this.call('PATCH', path, body);
+      } catch (e) {
+        if (!(e instanceof DatabucketError) || e.status !== 405) throw e;
+        this.changeWithPut = true;
+      }
+    }
+    return this.call('PUT', path, body);
+  }
+
   private async send(method: string, path: string, headers: Record<string, string>, body?: string): Promise<{ status: number; text: string }> {
     const url = this.baseUrl + path;
     const start = Date.now();
